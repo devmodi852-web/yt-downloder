@@ -78,15 +78,17 @@ app.get('/api/info', (req, res) => {
 
   console.log('Fetching metadata:', url);
 
-const cmd =
-  `"${YTDLP_PATH}" ` +
-  `--cookies cookies.txt ` +
-  `--extractor-args "youtube:player_client=web_creator" ` +
-  `--extractor-retries 5 ` +
-  `--no-playlist ` +
-  `--no-warnings ` +
-  `--user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" ` +
-  `--dump-json "${url}"`;
+  const cmd =
+    `"${YTDLP_PATH}" ` +
+    `--cookies cookies.txt ` +
+    `--extractor-args "youtube:player_client=tv_embedded" ` +
+    `--extractor-retries 10 ` +
+    `--force-ipv4 ` +
+    `--geo-bypass ` +
+    `--no-playlist ` +
+    `--no-check-certificates ` +
+    `--user-agent "com.google.android.youtube/19.09.37 (Linux; U; Android 11)" ` +
+    `--dump-single-json "${url}"`;
 
   exec(
     cmd,
@@ -228,14 +230,21 @@ app.post('/api/download', (req, res) => {
       'cookies.txt',
 
       '--extractor-args',
-      'youtube:player_client=web_creator',
+      'youtube:player_client=tv_embedded',
+
+      '--extractor-retries',
+      '10',
+
+      '--force-ipv4',
+
+      '--geo-bypass',
+
+      '--no-check-certificates',
 
       '--no-playlist',
 
-      '--no-warnings',
-
       '--user-agent',
-      'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+      'com.google.android.youtube/19.09.37 (Linux; U; Android 11)',
 
       url,
 
@@ -268,14 +277,21 @@ app.post('/api/download', (req, res) => {
       'cookies.txt',
 
       '--extractor-args',
-      'youtube:player_client=web_creator',
+      'youtube:player_client=tv_embedded',
+
+      '--extractor-retries',
+      '10',
+
+      '--force-ipv4',
+
+      '--geo-bypass',
+
+      '--no-check-certificates',
 
       '--no-playlist',
 
-      '--no-warnings',
-
       '--user-agent',
-      'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+      'com.google.android.youtube/19.09.37 (Linux; U; Android 11)',
 
       url,
 
@@ -307,14 +323,21 @@ app.post('/api/download', (req, res) => {
       'cookies.txt',
 
       '--extractor-args',
-      'youtube:player_client=web_creator',
+      'youtube:player_client=tv_embedded',
+
+      '--extractor-retries',
+      '10',
+
+      '--force-ipv4',
+
+      '--geo-bypass',
+
+      '--no-check-certificates',
 
       '--no-playlist',
 
-      '--no-warnings',
-
       '--user-agent',
-      'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+      'com.google.android.youtube/19.09.37 (Linux; U; Android 11)',
 
       url,
 
