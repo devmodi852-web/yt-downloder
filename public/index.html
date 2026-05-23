@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube Downloader Premium — Ultra HD & MP3 Converter</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+  <!-- FontAwesome Icons for premium visual feel -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Background Decorative Glowing Blobs -->
+  <div class="blob blob-purple"></div>
+  <div class="blob blob-pink"></div>
+
+  <div class="container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo-wrapper">
+        <div class="logo-icon">
+          <i class="fa-brands fa-youtube play-icon"></i>
+        </div>
+        <h1 id="app-title">ANTIGRAVITY <span class="gradient-text">DL</span></h1>
+      </div>
+      <p class="subtitle">Download YouTube videos in Ultra HD 4K, convert to premium 320kbps MP3s, and grab high-res thumbnails instantly.</p>
+    </header>
+
+    <!-- Main Content Card -->
+    <main class="main-card">
+      
+      <!-- Input Section -->
+      <section class="input-section">
+        <div class="input-glow-container">
+          <i class="fa-solid fa-link input-icon"></i>
+          <input 
+            type="text" 
+            id="youtube-url-input" 
+            placeholder="Paste your YouTube video URL here..." 
+            autocomplete="off"
+            spellcheck="false"
+          >
+          <button id="analyze-btn" class="glow-btn">
+            <span class="btn-text">Analyze</span>
+            <i class="fa-solid fa-wand-magic-sparkles btn-icon"></i>
+          </button>
+        </div>
+        <p id="error-message" class="error-text hidden">
+          <i class="fa-solid fa-circle-exclamation"></i> <span>Please enter a valid YouTube video URL.</span>
+        </p>
+      </section>
+
+      <!-- Skeleton Shimmer Loader (Initially Hidden) -->
+      <section id="skeleton-loader" class="skeleton-card hidden">
+        <div class="skeleton-layout">
+          <div class="skeleton-thumb shimmer"></div>
+          <div class="skeleton-details">
+            <div class="skeleton-title shimmer"></div>
+            <div class="skeleton-channel shimmer"></div>
+            <div class="skeleton-tabs shimmer"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Video Details & Download Tabs (Initially Hidden) -->
+      <section id="download-workspace" class="workspace-card hidden">
+        
+        <!-- Video Preview Metadata -->
+        <div class="video-preview-header">
+          <div class="thumbnail-wrapper">
+            <img id="video-thumbnail" src="" alt="Video Thumbnail">
+            <span id="video-duration" class="duration-badge">00:00</span>
+          </div>
+          <div class="video-meta-details">
+            <h2 id="video-title">YouTube Video Title Placeholder</h2>
+            <p id="video-author"><i class="fa-solid fa-circle-check channel-verify-icon"></i> Channel Name</p>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="tabs-nav">
+          <button class="tab-btn active" data-tab="video-tab">
+            <i class="fa-solid fa-film"></i> Video Download
+          </button>
+          <button class="tab-btn" data-tab="audio-tab">
+            <i class="fa-solid fa-music"></i> Audio (MP3)
+          </button>
+          <button class="tab-btn" data-tab="thumbnail-tab">
+            <i class="fa-regular fa-image"></i> Thumbnail
+          </button>
+        </div>
+
+        <!-- Tab Contents -->
+        <div class="tab-content">
+          
+          <!-- Video Options Panel -->
+          <div id="video-tab" class="tab-panel active">
+            <div class="options-grid" id="video-resolutions-grid">
+              <!-- Dynamically populated video formats will go here -->
+            </div>
+          </div>
+
+          <!-- Audio Options Panel -->
+          <div id="audio-tab" class="tab-panel">
+            <div class="audio-control-card">
+              <div class="audio-header">
+                <h3>Extract Premium MP3 Audio</h3>
+                <p>Convert the video into high-quality audio file format</p>
+              </div>
+              
+              <div class="audio-options-list">
+                <label class="audio-option-item checked">
+                  <input type="radio" name="audio-bitrate" value="320k" checked>
+                  <div class="audio-info">
+                    <span class="quality-title">Ultra Quality (320 kbps)</span>
+                    <span class="quality-desc">Pristine sound quality, perfect for hi-fi audio setups</span>
+                  </div>
+                  <div class="radio-indicator"></div>
+                </label>
+                
+                <label class="audio-option-item">
+                  <input type="radio" name="audio-bitrate" value="256k">
+                  <div class="audio-info">
+                    <span class="quality-title">High Quality (256 kbps)</span>
+                    <span class="quality-desc">Excellent compression-to-quality balance</span>
+                  </div>
+                  <div class="radio-indicator"></div>
+                </label>
+                
+                <label class="audio-option-item">
+                  <input type="radio" name="audio-bitrate" value="128k">
+                  <div class="audio-info">
+                    <span class="quality-title">Standard Quality (128 kbps)</span>
+                    <span class="quality-desc">Lightweight file size, ideal for standard mobile use</span>
+                  </div>
+                  <div class="radio-indicator"></div>
+                </label>
+              </div>
+              
+              <button id="download-audio-btn" class="action-btn glow-btn-purple">
+                <i class="fa-solid fa-cloud-arrow-down"></i> Convert & Download MP3
+              </button>
+            </div>
+          </div>
+
+          <!-- Thumbnail Options Panel -->
+          <div id="thumbnail-tab" class="tab-panel">
+            <div class="thumbnail-control-card">
+              <div class="thumbnail-header">
+                <h3>Download Video Thumbnail</h3>
+                <p>Save high-resolution banner image from this YouTube video</p>
+              </div>
+              <div class="thumbnail-preview-container">
+                <img id="thumbnail-preview-img" src="" alt="High Res Thumbnail Preview">
+              </div>
+              <button id="download-thumbnail-btn" class="action-btn glow-btn-pink">
+                <i class="fa-solid fa-download"></i> Download Max Quality Thumbnail (HD)
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- Download Progress Overlay Modal (Initially Hidden) -->
+    <div id="progress-modal" class="modal-overlay hidden">
+      <div class="modal-card">
+        <h3 id="progress-title">Downloading Your Media</h3>
+        <p id="progress-subtitle">Fetching data from servers...</p>
+        
+        <!-- Circular Progress Circle -->
+        <div class="progress-ring-container">
+          <svg class="progress-ring" width="160" height="160">
+            <circle class="progress-ring-circle-bg" stroke="rgba(255,255,255,0.05)" stroke-width="8" fill="transparent" r="70" cx="80" cy="80" />
+            <circle id="progress-circle-bar" class="progress-ring-circle-bar" stroke="url(#progress-gradient)" stroke-width="8" stroke-dasharray="439.8" stroke-dashoffset="439.8" stroke-linecap="round" fill="transparent" r="70" cx="80" cy="80" />
+            <defs>
+              <linearGradient id="progress-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#8b5cf6" />
+                <stop offset="100%" stop-color="#ec4899" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <div id="progress-percent" class="percent-label">0%</div>
+        </div>
+
+        <!-- Linear Bar Backup -->
+        <div class="linear-bar-wrapper">
+          <div id="progress-linear-bar" class="linear-bar" style="width: 0%;"></div>
+        </div>
+
+        <!-- Download Metrics -->
+        <div class="metrics-grid">
+          <div class="metric-item">
+            <span class="metric-label">Download Speed</span>
+            <span id="metric-speed" class="metric-value">0 KB/s</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">Time Remaining</span>
+            <span id="metric-eta" class="metric-value">--:--</span>
+          </div>
+        </div>
+
+        <div id="stage-badge" class="badge-stage">DOWNLOADING</div>
+
+        <!-- Cancel Download Button -->
+        <button id="cancel-download-btn" class="cancel-btn">
+          Cancel Download
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="app-footer">
+    <p>Antigravity Downloader &copy; 2026. Handcrafted for premium styling & ultimate performance.</p>
+  </footer>
+
+  <!-- Frontend Logic -->
+  <script src="app.js"></script>
+</body>
+</html>
