@@ -80,8 +80,7 @@ app.get('/api/info', (req, res) => {
 
   const cmd =
     `"${YTDLP_PATH}" ` +
-    `--cookies cookies.txt ` +
-    `--extractor-args "youtube:player_client=tv_embedded" ` +
+    `--extractor-args "youtube:player_client=android" ` +
     `--extractor-retries 10 ` +
     `--force-ipv4 ` +
     `--geo-bypass ` +
@@ -226,11 +225,8 @@ app.post('/api/download', (req, res) => {
 
     args = [
 
-      '--cookies',
-      'cookies.txt',
-
       '--extractor-args',
-      'youtube:player_client=tv_embedded',
+      'youtube:player_client=android',
 
       '--extractor-retries',
       '10',
@@ -273,11 +269,8 @@ app.post('/api/download', (req, res) => {
 
     args = [
 
-      '--cookies',
-      'cookies.txt',
-
       '--extractor-args',
-      'youtube:player_client=tv_embedded',
+      'youtube:player_client=android',
 
       '--extractor-retries',
       '10',
@@ -319,11 +312,8 @@ app.post('/api/download', (req, res) => {
 
     args = [
 
-      '--cookies',
-      'cookies.txt',
-
       '--extractor-args',
-      'youtube:player_client=tv_embedded',
+      'youtube:player_client=android',
 
       '--extractor-retries',
       '10',
