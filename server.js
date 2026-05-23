@@ -81,7 +81,7 @@ app.get('/api/info', (req, res) => {
   const cmd =
     `"${YTDLP_PATH}" ` +
     `--cookies cookies.txt ` +
-    `--extractor-args "youtube:player_client=android" ` +
+    `--extractor-args "youtube:player_client=android,web" ` +
     `--no-playlist ` +
     `--no-warnings ` +
     `--user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" ` +
