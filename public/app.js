@@ -1,3 +1,41 @@
+const urlInput = document.getElementById('urlInput');
+const analyzeBtn = document.getElementById('analyzeBtn');
+
+const skeletonLoader = document.getElementById('skeletonLoader');
+const downloadWorkspace = document.getElementById('downloadWorkspace');
+const errorMessage = document.getElementById('errorMessage');
+
+let currentVideoUrl = '';
+
+// CLICK EVENT
+analyzeBtn.addEventListener('click', analyzeUrl);
+
+// VALIDATE URL
+function isValidYouTubeUrl(url) {
+
+  return (
+    url.includes('youtube.com/watch?v=') ||
+    url.includes('youtu.be/')
+  );
+}
+
+// SHOW ERROR
+function showError(message) {
+
+  errorMessage.textContent = message;
+
+  errorMessage.classList.remove('hidden');
+
+  analyzeBtn.disabled = false;
+
+  analyzeBtn.querySelector('.btn-text').textContent =
+    'Analyze';
+
+  analyzeBtn.querySelector('.btn-icon').className =
+    'fa-solid fa-wand-magic-sparkles btn-icon';
+}
+
+// MAIN ANALYZE FUNCTION
 async function analyzeUrl() {
 
   let url = urlInput.value.trim();
@@ -14,11 +52,11 @@ async function analyzeUrl() {
       // Remove leading slash
       videoId = videoId.replace("/", "").trim();
 
-      // Remove accidental params
+      // Remove params
       videoId = videoId.split("?")[0];
       videoId = videoId.split("&")[0];
 
-      // Build final clean URL
+      // Convert to full URL
       url = `https://www.youtube.com/watch?v=${videoId}`;
 
       console.log("Converted URL:", url);
@@ -26,36 +64,53 @@ async function analyzeUrl() {
 
   } catch (err) {
 
-    console.error("Short URL conversion failed:", err);
+    console.error("URL conversion failed:", err);
   }
 
+  // Hide previous errors
   errorMessage.classList.add('hidden');
 
+  // Empty URL check
   if (!url) {
 
     showError('Please paste a YouTube URL first.');
     return;
   }
 
+  // URL validation
   if (!isValidYouTubeUrl(url)) {
 
-    showError('The URL provided is not a valid YouTube link. Please check it and try again.');
+    showError('Invalid YouTube URL.');
     return;
   }
 
   currentVideoUrl = url;
 
-  // UI state transitions
-  downloadWorkspace.classList.add('hidden');
+  // UI states
+  if (downloadWorkspace) {
+    downloadWorkspace.classList.add('hidden');
+  }
 
-  skeletonLoader.classList.remove('hidden');
+  if (skeletonLoader) {
+    skeletonLoader.classList.remove('hidden');
+  }
 
   analyzeBtn.disabled = true;
 
-  analyzeBtn.querySelector('.btn-text').textContent = 'Analyzing...';
+  const btnText =
+    analyzeBtn.querySelector('.btn-text');
 
-  analyzeBtn.querySelector('.btn-icon').className =
-    'fa-solid fa-spinner fa-spin btn-icon';
+  const btnIcon =
+    analyzeBtn.querySelector('.btn-icon');
+
+  if (btnText) {
+    btnText.textContent = 'Analyzing...';
+  }
+
+  if (btnIcon) {
+    btnIcon.className =
+      'fa-solid fa-spinner fa-spin btn-icon';
+  }
 
   try {
 
@@ -72,7 +127,20 @@ async function analyzeUrl() {
       );
     }
 
-    renderWorkspace(data);
+    console.log(data);
+
+    // HIDE LOADER
+    if (skeletonLoader) {
+      skeletonLoader.classList.add('hidden');
+    }
+
+    // SHOW WORKSPACE
+    if (downloadWorkspace) {
+      downloadWorkspace.classList.remove('hidden');
+    }
+
+    // OPTIONAL:
+    // renderWorkspace(data);
 
   } catch (err) {
 
@@ -80,19 +148,24 @@ async function analyzeUrl() {
 
     showError(
       err.message ||
-      'An error occurred while fetching video details. Please try again.'
+      'An error occurred while fetching video details.'
     );
 
-    skeletonLoader.classList.add('hidden');
+    if (skeletonLoader) {
+      skeletonLoader.classList.add('hidden');
+    }
 
   } finally {
 
     analyzeBtn.disabled = false;
 
-    analyzeBtn.querySelector('.btn-text').textContent =
-      'Analyze';
+    if (btnText) {
+      btnText.textContent = 'Analyze';
+    }
 
-    analyzeBtn.querySelector('.btn-icon').className =
-      'fa-solid fa-wand-magic-sparkles btn-icon';
+    if (btnIcon) {
+      btnIcon.className =
+        'fa-solid fa-wand-magic-sparkles btn-icon';
+    }
   }
 }
