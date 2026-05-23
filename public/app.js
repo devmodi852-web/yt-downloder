@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   async function analyzeUrl() {
-    const url = urlInput.value.trim();
+    let url = urlInput.value.trim();  if (url.includes("youtu.be/")) {     const videoId = url.split("youtu.be/")[1].split("?")[0];     url = `https://www.youtube.com/watch?v=${videoId}`; }
     errorMessage.classList.add('hidden');
     
     if (!url) {
