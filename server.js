@@ -80,6 +80,8 @@ app.get('/api/info', (req, res) => {
 
   const cmd =
     `"${YTDLP_PATH}" ` +
+    `--cookies cookies.txt ` +
+    `--extractor-args "youtube:player_client=android" ` +
     `--no-playlist ` +
     `--no-warnings ` +
     `--user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" ` +
@@ -220,8 +222,17 @@ app.post('/api/download', (req, res) => {
       quality || '1080';
 
     args = [
+
+      '--cookies',
+      'cookies.txt',
+
+      '--extractor-args',
+      'youtube:player_client=android',
+
       '--no-playlist',
+
       '--no-warnings',
+
       '--user-agent',
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
 
@@ -251,8 +262,17 @@ app.post('/api/download', (req, res) => {
       bitrate || '320k';
 
     args = [
+
+      '--cookies',
+      'cookies.txt',
+
+      '--extractor-args',
+      'youtube:player_client=android',
+
       '--no-playlist',
+
       '--no-warnings',
+
       '--user-agent',
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
 
@@ -281,8 +301,17 @@ app.post('/api/download', (req, res) => {
   else if (type === 'thumbnail') {
 
     args = [
+
+      '--cookies',
+      'cookies.txt',
+
+      '--extractor-args',
+      'youtube:player_client=android',
+
       '--no-playlist',
+
       '--no-warnings',
+
       '--user-agent',
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
 
