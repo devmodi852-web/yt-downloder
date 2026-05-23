@@ -15,15 +15,16 @@ const PUBLIC_DIR = path.join(__dirname, 'public');
 
 const isWindows = process.platform === 'win32';
 
+// FINAL FIXED PATHS
 const YTDLP_PATH = isWindows
   ? path.join(BIN_DIR, 'yt-dlp.exe')
-  : 'python3';
+  : 'yt-dlp';
 
 const FFMPEG_PATH = isWindows
   ? path.join(BIN_DIR, 'ffmpeg.exe')
   : 'ffmpeg';
 
-// Enable JSON middleware
+// Middleware
 app.use(express.json());
 
 // Ensure directories exist
@@ -35,7 +36,7 @@ if (!fs.existsSync(PUBLIC_DIR)) {
   fs.mkdirSync(PUBLIC_DIR, { recursive: true });
 }
 
-// In-memory job state
+// Active jobs
 const activeJobs = new Map();
 
 // Broadcast helper
@@ -61,27 +62,38 @@ function broadcast(jobId, data) {
 
 // Initialize server
 async function initServer() {
-  console.log('Validating dependencies...');
+
+  console.log('Checking dependencies...');
 
   try {
+
     if (isWindows) {
+
       if (!fs.existsSync(YTDLP_PATH) || !fs.existsSync(FFMPEG_PATH)) {
+
         console.log('Missing binaries. Running setup...');
         await runSetup();
+
       } else {
+
         console.log('All binaries found.');
       }
+
     } else {
+
       console.log('Linux environment detected.');
       console.log('Using system yt-dlp + ffmpeg.');
     }
+
   } catch (err) {
-    console.error('Dependency initialization failed:', err.message);
+
+    console.error('Initialization failed:', err.message);
   }
 }
 
-// Fetch video info
+// VIDEO INFO API
 app.get('/api/info', (req, res) => {
+
   const { url } = req.query;
 
   if (!url) {
@@ -92,13 +104,12 @@ app.get('/api/info', (req, res) => {
 
   console.log(`Fetching metadata for: ${url}`);
 
-  const cmd = isWindows
-    ? `"${YTDLP_PATH}" --dump-json "${url}"`
-    : `python3 -m yt_dlp --dump-json "${url}"`;
+  const cmd = `"${YTDLP_PATH}" --dump-json "${url}"`;
 
-  exec(cmd, { maxBuffer: 10 * 1024 * 1024 }, (err, stdout, stderr) => {
+  exec(cmd, { maxBuffer: 20 * 1024 * 1024 }, (err, stdout, stderr) => {
 
     if (err) {
+
       console.error('YT-DLP ERROR:');
       console.error(stderr);
       console.error(err);
@@ -109,13 +120,16 @@ app.get('/api/info', (req, res) => {
     }
 
     try {
+
       const metadata = JSON.parse(stdout);
 
       const resolutions = new Set();
       const formats = [];
 
       if (metadata.formats) {
+
         metadata.formats.forEach((f) => {
+
           if (f.vcodec !== 'none' && f.height) {
 
             resolutions.add(f.height);
@@ -135,14 +149,18 @@ app.get('/api/info', (req, res) => {
 
       const sortedResolutions = Array.from(resolutions)
         .sort((a, b) => b - a)
-        .filter((r) => [144, 240, 360, 480, 720, 1080, 1440, 2160].includes(r));
+        .filter((r) =>
+          [144, 240, 360, 480, 720, 1080, 1440, 2160].includes(r)
+        );
 
       const thumbs = metadata.thumbnails || [];
 
       const highResThumb = thumbs.reduce((prev, current) => {
+
         return (prev.width || 0) > (current.width || 0)
           ? prev
           : current;
+
       }, { url: metadata.thumbnail });
 
       res.json({
@@ -151,12 +169,12 @@ app.get('/api/info', (req, res) => {
         duration: metadata.duration,
         thumbnail: highResThumb.url,
         resolutions: sortedResolutions,
-        formats: formats
+        formats
       });
 
     } catch (parseErr) {
 
-      console.error('Metadata parsing error:', parseErr);
+      console.error('JSON PARSE ERROR:', parseErr);
 
       res.status(500).json({
         error: 'Error parsing video metadata.'
@@ -165,14 +183,14 @@ app.get('/api/info', (req, res) => {
   });
 });
 
-// Download route
+// DOWNLOAD API
 app.post('/api/download', (req, res) => {
 
   const { url, type, quality, bitrate } = req.body;
 
   if (!url || !type) {
     return res.status(400).json({
-      error: 'URL and Type parameters are required.'
+      error: 'URL and Type are required.'
     });
   }
 
@@ -200,6 +218,7 @@ app.post('/api/download', (req, res) => {
 
   let args = [];
 
+  // VIDEO
   if (type === 'video') {
 
     const height = quality || '1080';
@@ -215,8 +234,10 @@ app.post('/api/download', (req, res) => {
       '-o',
       path.join(DOWNLOADS_DIR, `${jobId}.temp.%(ext)s`)
     ];
+  }
 
-  } else if (type === 'audio') {
+  // AUDIO
+  else if (type === 'audio') {
 
     const rate = bitrate || '320k';
 
@@ -234,8 +255,10 @@ app.post('/api/download', (req, res) => {
       '-o',
       path.join(DOWNLOADS_DIR, `${jobId}.temp.%(ext)s`)
     ];
+  }
 
-  } else if (type === 'thumbnail') {
+  // THUMBNAIL
+  else if (type === 'thumbnail') {
 
     args = [
       url,
@@ -246,14 +269,10 @@ app.post('/api/download', (req, res) => {
     ];
   }
 
-  const spawnArgs = isWindows
-    ? args
-    : ['-m', 'yt_dlp', ...args];
-
   console.log('Running yt-dlp...');
-  console.log(spawnArgs.join(' '));
+  console.log(args.join(' '));
 
-  const child = spawn(YTDLP_PATH, spawnArgs);
+  const child = spawn(YTDLP_PATH, args);
 
   child.stdout.on('data', (data) => {
 
@@ -328,15 +347,15 @@ app.post('/api/download', (req, res) => {
 
       fs.renameSync(sourcePath, finalPath);
 
-      const titleCmd = isWindows
-        ? `"${YTDLP_PATH}" --get-title "${url}"`
-        : `python3 -m yt_dlp --get-title "${url}"`;
+      const titleCmd =
+        `"${YTDLP_PATH}" --get-title "${url}"`;
 
       exec(titleCmd, (err, stdout) => {
 
         let cleanTitle = 'youtube_download';
 
         if (!err && stdout) {
+
           cleanTitle = stdout
             .trim()
             .replace(/[/\\?%*:|"<>]/g, '_');
@@ -367,7 +386,7 @@ app.post('/api/download', (req, res) => {
   });
 });
 
-// SSE progress
+// SSE PROGRESS
 app.get('/api/progress/:jobId', (req, res) => {
 
   const { jobId } = req.params;
@@ -401,7 +420,7 @@ app.get('/api/progress/:jobId', (req, res) => {
   });
 });
 
-// Retrieve download
+// RETRIEVE FILE
 app.get('/api/retrieve/:jobId', (req, res) => {
 
   const { jobId } = req.params;
@@ -419,7 +438,6 @@ app.get('/api/retrieve/:jobId', (req, res) => {
     } else {
 
       fs.unlink(job.filePath, () => {});
-
       activeJobs.delete(jobId);
     }
   });
@@ -428,7 +446,7 @@ app.get('/api/retrieve/:jobId', (req, res) => {
 // Static frontend
 app.use(express.static(PUBLIC_DIR));
 
-// Start server
+// START SERVER
 function startListening(port) {
 
   const server = app.listen(port, () => {
@@ -445,10 +463,10 @@ function startListening(port) {
     if (err.code === 'EADDRINUSE') {
 
       console.log(`Port ${port} in use. Trying ${port + 1}`);
-
       startListening(port + 1);
 
     } else {
+
       console.error(err);
     }
   });
