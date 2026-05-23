@@ -85,7 +85,7 @@ app.get('/api/info', (req, res) => {
     `--no-playlist ` +
     `--no-warnings ` +
     `--user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" ` +
-    `--dump-json "${url}"`;
+    `--flat-playlist --dump-single-json "${url}"`;
 
   exec(
     cmd,
