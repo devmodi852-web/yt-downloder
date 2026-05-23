@@ -78,14 +78,15 @@ app.get('/api/info', (req, res) => {
 
   console.log('Fetching metadata:', url);
 
-  const cmd =
-    `"${YTDLP_PATH}" ` +
-    `--cookies cookies.txt ` +
-    `--extractor-args "youtube:player_client=web_creator" ` +
-    `--no-playlist ` +
-    `--no-warnings ` +
-    `--user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" ` +
-    `--flat-playlist --dump-single-json "${url}"`;
+const cmd =
+  `"${YTDLP_PATH}" ` +
+  `--cookies cookies.txt ` +
+  `--extractor-args "youtube:player_client=web_creator" ` +
+  `--extractor-retries 5 ` +
+  `--no-playlist ` +
+  `--no-warnings ` +
+  `--user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" ` +
+  `--dump-json "${url}"`;
 
   exec(
     cmd,
