@@ -81,7 +81,7 @@ app.get('/api/info', (req, res) => {
   const cmd =
     `"${YTDLP_PATH}" ` +
     `--cookies cookies.txt ` +
-    `--extractor-args "youtube:player_client=android" ` +
+    `--extractor-args "youtube:player_client=web_creator" ` +
     `--no-playlist ` +
     `--no-warnings ` +
     `--user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" ` +
@@ -227,7 +227,7 @@ app.post('/api/download', (req, res) => {
       'cookies.txt',
 
       '--extractor-args',
-      'youtube:player_client=android',
+      'youtube:player_client=web_creator',
 
       '--no-playlist',
 
@@ -267,7 +267,7 @@ app.post('/api/download', (req, res) => {
       'cookies.txt',
 
       '--extractor-args',
-      'youtube:player_client=android',
+      'youtube:player_client=web_creator',
 
       '--no-playlist',
 
@@ -306,7 +306,7 @@ app.post('/api/download', (req, res) => {
       'cookies.txt',
 
       '--extractor-args',
-      'youtube:player_client=android',
+      'youtube:player_client=web_creator',
 
       '--no-playlist',
 
