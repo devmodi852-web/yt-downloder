@@ -14,8 +14,8 @@ const DOWNLOADS_DIR = path.join(__dirname, 'downloads');
 const PUBLIC_DIR = path.join(__dirname, 'public');
 
 const isWindows = process.platform === 'win32';
-const YTDLP_PATH = path.join(BIN_DIR, isWindows ? 'yt-dlp.exe' : 'yt-dlp');
-const FFMPEG_PATH = path.join(BIN_DIR, isWindows ? 'ffmpeg.exe' : 'ffmpeg');
+const YTDLP_PATH = path.join(BIN_DIR, isWindows ? 'yt-dlp' : 'yt-dlp');
+const FFMPEG_PATH = path.join(BIN_DIR, isWindows ? 'ffmpeg' : 'ffmpeg');
 
 // Enable JSON middleware
 app.use(express.json());
